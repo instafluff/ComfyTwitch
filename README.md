@@ -1,7 +1,7 @@
 # ComfyTwitch
 Comfiest Way to Add Serverless Twitch Authentication
 
-**ComfyTwitch** lets you integrate Twitch authentication for websites without a server ***SUPER EASILY*** in just a few lines of code. It automagically caches the authentication in the browser so that users do not have to log in every single visit.
+**ComfyTwitch** lets you integrate Twitch authentication for websites without a server ***SUPER EASILY*** in just a few lines of code. It automatically caches the authentication in the browser so that users do not have to log in every single visit.
 
 ## Instafluff ##
 > *Like these projects? The best way to support my open-source projects is by becoming a Comfy Sponsor on GitHub!*
@@ -26,7 +26,8 @@ Comfiest Way to Add Serverless Twitch Authentication
 <script src="comfytwitch.min.js"></script>
 ```
 
-2. Check for Twitch authentication using `ComfyTwitch.Check()` for whether or not the user is logged in. The authentication is automagically cached in the browser so that the user does not have to log in every time.
+2. Check for Twitch authentication using `ComfyTwitch.Check()` for whether or not the user is logged in.
+***The authentication is cached in the browser so that the user does not have to log in every time.***
 ```html
 <html>
     <head>
