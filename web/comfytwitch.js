@@ -14,6 +14,7 @@ async function checkTwitchTokenURL() {
                 // Replace current URL
                 const url = window.location.href.split( "#" )[ 0 ];
                 window.location.replace( url );
+                result.token = accessToken;
                 return result;
             }
         }
@@ -30,6 +31,7 @@ async function checkTwitchTokenLocalStorage() {
         if( accessToken ) {
             let result = await validateTwitchToken( accessToken );
             if( result && result.login ) {
+                result.token = accessToken;
                 return result;
             }
         }
@@ -57,6 +59,7 @@ async function validateTwitchToken( token ) {
 let comfyTwitchAuth = {
     UserId: 0,
     User: "",
+    Token: "",
     Scopes: [],
     Logout: function () {
         localStorage.removeItem( "twitchToken" );
@@ -69,6 +72,7 @@ let comfyTwitchAuth = {
         if( result ) {
             comfyTwitchAuth.UserId = result.user_id;
             comfyTwitchAuth.User = result.login;
+            comfyTwitchAuth.Token = result.token;
             comfyTwitchAuth.Scopes = result.scopes;
         }
         else {
