@@ -1,0 +1,38 @@
+{
+  "name": "comfytwitch",
+  "version": "1.0.0",
+  "description": "Comfiest Way to Add Serverless Twitch Authentication",
+  "main": "index.js",
+  "scripts": {
+    "build": "npm-run-all --sequential build:*",
+    "build:terser": "terser --compress --mangle --toplevel --source-map --output ./web/comfytwitch.min.js ./web/comfytwitch.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/instafluff/ComfyTwitch.git"
+  },
+  "keywords": [
+    "Instafluff",
+    "Comfy",
+    "Twitch",
+    "Auth",
+    "Authentication",
+    "Serverless",
+    "Web",
+    "OAuth"
+  ],
+  "author": "Instafluff",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/instafluff/ComfyTwitch/issues"
+  },
+  "homepage": "https://github.com/instafluff/ComfyTwitch#readme",
+  "devDependencies": {
+    "npm-run-all": "^4.1.5",
+    "terser": "^4.6.3"
+  },
+  "dependencies": {
+    "webwebweb": "^1.1.10"
+  }
+}

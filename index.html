@@ -1,0 +1,38 @@
+<html>
+  <head>
+    <title>Comfy Twitch Auth</title>
+    <script src="web/comfytwitch.min.js"></script>
+  </head>
+  <body>
+    <h1 id="testauth"></h1>
+    <p id="username"></p>
+    <p id="userid"></p>
+    <a id="login" href="#">Login</a>
+    <script>
+        const clientId = "2odsv8xermvalbub7wipebrphqlpqv";
+        const baseUrl = window.location.origin;
+
+        ComfyTwitch.Check()
+        .then( async result => {
+            if( result ) {
+                console.log( result );
+                document.querySelector( "#username" ).innerText = result.login;
+                document.querySelector( "#userid" ).innerText = result.user_id;
+                document.querySelector( "#login" ).innerText = "Logout";
+                document.querySelector( "#login" ).addEventListener( "click", function() {
+                    ComfyTwitch.Logout();
+                    window.location.reload();
+                });
+                let user = await ComfyTwitch.GetUser( clientId, result.user_id );
+                console.log( user );
+                document.querySelector( "#username" ).innerText = user.display_name;
+            }
+            else {
+                document.querySelector( "#login" ).addEventListener( "click", function() {
+                    ComfyTwitch.Login( clientId, `${baseUrl}/index.html`, [ "user:read:email" ] );
+                });
+            }
+        });
+    </script>
+  </body>
+</html>
