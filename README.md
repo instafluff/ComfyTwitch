@@ -12,6 +12,9 @@ Comfiest Way to Add Serverless Twitch Authentication
 
 > https://twitch.tv/instafluff
 
+## Demo ##
+To see how it works, check out this static webpage that authenticates using Twitch OAuth: [https://www.instafluff.tv/ComfyTwitch](https://www.instafluff.tv/ComfyTwitch)
+
 ## Instructions ##
 
 #### Prequisites
