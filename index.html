@@ -10,7 +10,7 @@
     <a id="login" href="#">Login</a>
     <script>
         const clientId = "wu7qd6tn0uc5n05u2tjy3snl20da76"; // Replace this with your own ClientID
-        const baseUrl = window.location.origin + window.location.pathname.replace(/\/+$/, '');
+        const baseUrl = window.location.origin + window.location.pathname;
 
         ComfyTwitch.Check()
         .then( async result => {
@@ -32,7 +32,7 @@
             else {
                 // Not Logged In
                 document.querySelector( "#login" ).addEventListener( "click", function() {
-                    ComfyTwitch.Login( clientId, `${baseUrl}/index.html`, [ "user:read:email" ] );
+                    ComfyTwitch.Login( clientId, baseUrl, [ "user:read:email" ] );
                 });
             }
         });
