@@ -20,7 +20,8 @@
     "Authentication",
     "Serverless",
     "Web",
-    "OAuth"
+    "OAuth",
+    "Implicit"
   ],
   "author": "Instafluff",
   "license": "MIT",

@@ -59,6 +59,7 @@ async function validateTwitchToken( token ) {
 let comfyTwitchAuth = {
     UserId: 0,
     User: "",
+    ClientID: "",
     Token: "",
     Scopes: [],
     Logout: function () {
@@ -70,6 +71,7 @@ let comfyTwitchAuth = {
     Check: async function( redirectURI ) {
         let result = await checkForTwitchToken();
         if( result ) {
+            comfyTwitchAuth.ClientID = result.client_id;
             comfyTwitchAuth.UserId = result.user_id;
             comfyTwitchAuth.User = result.login;
             comfyTwitchAuth.Token = result.token;
@@ -86,7 +88,8 @@ let comfyTwitchAuth = {
     GetUser: async function( clientId, userId ) {
         return await fetch( `https://api.twitch.tv/helix/users?id=${userId}`, {
             headers: {
-                "Client-ID": clientId
+                "Client-ID": clientId,
+                "Authorization": `Bearer ${comfyTwitchAuth.Token}`,
             }
         } )
         .then( r => r.json() )
@@ -102,7 +105,7 @@ let comfyTwitchAuth = {
                 error: error
             };
         });
-    }
+    },
 };
 
 window.ComfyTwitch = comfyTwitchAuth;

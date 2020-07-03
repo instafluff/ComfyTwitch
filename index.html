@@ -1,7 +1,7 @@
 <html>
   <head>
-    <title>Comfy Twitch Auth</title>
-    <script src="web/comfytwitch.min.js"></script>
+    <title>Comfy Twitch Auth Demo</title>
+    <script src="web/comfytwitch.js"></script>
   </head>
   <body>
     <h1 id="testauth"></h1>
@@ -9,12 +9,13 @@
     <p id="userid"></p>
     <a id="login" href="#">Login</a>
     <script>
-        const clientId = "2odsv8xermvalbub7wipebrphqlpqv";
+        const clientId = "wu7qd6tn0uc5n05u2tjy3snl20da76"; // Replace this with your own ClientID
         const baseUrl = window.location.origin;
 
         ComfyTwitch.Check()
         .then( async result => {
             if( result ) {
+                // Logged In
                 console.log( result );
                 document.querySelector( "#username" ).innerText = result.login;
                 document.querySelector( "#userid" ).innerText = result.user_id;
@@ -23,11 +24,13 @@
                     ComfyTwitch.Logout();
                     window.location.reload();
                 });
+                // Get Info
                 let user = await ComfyTwitch.GetUser( clientId, result.user_id );
                 console.log( user );
                 document.querySelector( "#username" ).innerText = user.display_name;
             }
             else {
+                // Not Logged In
                 document.querySelector( "#login" ).addEventListener( "click", function() {
                     ComfyTwitch.Login( clientId, `${baseUrl}/index.html`, [ "user:read:email" ] );
                 });
