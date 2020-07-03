@@ -10,7 +10,7 @@
     <a id="login" href="#">Login</a>
     <script>
         const clientId = "wu7qd6tn0uc5n05u2tjy3snl20da76"; // Replace this with your own ClientID
-        const baseUrl = window.location.origin + window.location.pathname;
+        const baseUrl = window.location.origin + window.location.pathname.replace(/\/+$/, '');
 
         ComfyTwitch.Check()
         .then( async result => {
