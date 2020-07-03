@@ -21,9 +21,15 @@ Comfiest Way to Add Serverless Twitch Authentication
 
 #### Website
 
-1. Download  `comfytwitch.min.js` from the `web` folder and add into every page you need authenticated:
+1. Download  `comfytwitch.min.js` from the `web` folder or include from the JSDeliver CDN and add into every page you need authenticated:
 ```javascript
 <script src="comfytwitch.min.js"></script>
+```
+
+OR
+
+```javascript
+<script src="https://cdn.jsdelivr.net/npm/comfytwitch@latest/web/comfytwitch.min.js"></script>
 ```
 
 2. Check for Twitch authentication using `ComfyTwitch.Check()` for whether or not the user is logged in.
@@ -31,7 +37,7 @@ Comfiest Way to Add Serverless Twitch Authentication
 ```html
 <html>
     <head>
-        <script src="comfytwitch.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/comfytwitch@latest/web/comfytwitch.min.js"></script>
     </head>
     <body>
         <script type="text/javascript">
