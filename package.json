@@ -1,6 +1,6 @@
 {
   "name": "comfytwitch",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "Comfiest Way to Add Serverless Twitch Authentication",
   "main": "index.js",
   "scripts": {
