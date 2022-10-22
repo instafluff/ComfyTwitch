@@ -43,6 +43,7 @@ async function checkTwitchTokenURL() {
                 const url = window.location.href.split( "?" )[ 0 ];
                 window.location.replace( url );
                 result.token = token;
+                result.refreshToken = tokenData.refresh_token;
                 return result;
             }
         }
@@ -69,29 +70,28 @@ async function checkTwitchTokenLocalStorage() {
     try {
         // Check local storage
         const accessToken = localStorage.getItem( "twitchToken" );
+        const refreshToken = localStorage.getItem( "refreshToken" );
         if( accessToken ) {
             let result = await validateTwitchToken( accessToken );
             if( result && result.login ) {
                 result.token = accessToken;
+                result.refreshToken = refreshToken;
                 return result;
             }
-            else {
+            else if( refreshToken ) {
                 // Try refreshing the token
-                const refreshToken = localStorage.getItem( "refreshToken" );
-                if( refreshToken ) {
-                    if( !comfyTwitchAuth.refreshUrl ) {
-                        throw new Error( "No refresh endpoint set" );
-                    }
-                    const tokenData = await fetch( `${comfyTwitchAuth.refreshUrl}?token=${refreshToken}` ).then( r => r.json() );
-                    const token = tokenData.access_token;
-                    const result = await validateTwitchToken( token );
-                    if( result && result.login ) {
-                        // Save into localStorage
-                        localStorage.setItem( "twitchToken", token );
-                        localStorage.setItem( "refreshToken", tokenData.refresh_token );
-                        result.token = token;
-                        return result;
-                    }
+                if( !comfyTwitchAuth.refreshUrl ) {
+                    throw new Error( "No refresh endpoint set" );
+                }
+                const tokenData = await fetch( `${comfyTwitchAuth.refreshUrl}?token=${refreshToken}` ).then( r => r.json() );
+                const token = tokenData.access_token;
+                const result = await validateTwitchToken( token );
+                if( result && result.login ) {
+                    // Save into localStorage
+                    localStorage.setItem( "twitchToken", token );
+                    localStorage.setItem( "refreshToken", tokenData.refresh_token );
+                    result.token = token;
+                    return result;
                 }
             }
         }
@@ -122,6 +122,7 @@ let comfyTwitchAuth = {
     User: "",
     ClientID: "",
     Token: "",
+    RefreshToken: "",
     Scopes: [],
     Logout: function () {
         localStorage.removeItem( "twitchToken" );
@@ -144,6 +145,7 @@ let comfyTwitchAuth = {
             comfyTwitchAuth.UserId = result.user_id;
             comfyTwitchAuth.User = result.login;
             comfyTwitchAuth.Token = result.token;
+            comfyTwitchAuth.RefreshToken = result.refreshToken;
             comfyTwitchAuth.Scopes = result.scopes;
         }
         else {
