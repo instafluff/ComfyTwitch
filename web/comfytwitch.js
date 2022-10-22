@@ -126,6 +126,7 @@ let comfyTwitchAuth = {
     Scopes: [],
     Logout: function () {
         localStorage.removeItem( "twitchToken" );
+        localStorage.removeItem( "refreshToken" );
     },
     Login: function ( clientId, redirectURI, scopes = [ "user:read:email" ], type = "token" ) {
         const state = generateNonce();
