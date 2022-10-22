@@ -30,7 +30,7 @@ async function checkTwitchTokenURL() {
             if( !comfyTwitchAuth.codeAuthUrl ) {
                 throw new Error( "No code grant endpoint set" );
             }
-            const tokenData = await fetch( `${comfyTwitchAuth.codeAuthUrl}?code=${accessCode}` ).then( r => r.json() );
+            const tokenData = await fetch( `${comfyTwitchAuth.codeAuthUrl}?code=${accessCode}&redirect=${window.location.origin + window.location.pathname}` ).then( r => r.json() );
             // console.log( tokenData );
             const token = tokenData.access_token;
             const result = await validateTwitchToken( token );
