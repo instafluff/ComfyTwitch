@@ -1,13 +1,53 @@
+function generateNonce() {
+    const charset = `0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-_`;
+    const result = [];
+    window.crypto.getRandomValues(new Uint8Array(32)).forEach(c =>
+        result.push(charset[c % charset.length]));
+    return result.join("");
+}
+
+function checkAuthState() {
+    const queryString = new URLSearchParams( location.search );
+    const nonce = queryString.get( "state" );
+    const storedNonce = window.localStorage.getItem( "comfytwitch_nonce" );
+    if( nonce && nonce !== storedNonce ) {
+        throw new Error( "Auth State did not match" );
+    }
+}
+
 async function checkForTwitchToken() {
     return await checkTwitchTokenLocalStorage() || await checkTwitchTokenURL();
 }
 
 async function checkTwitchTokenURL() {
     try {
+        checkAuthState();
+        const queryString = new URLSearchParams( location.search );
+        const accessCode = queryString.get( "code" );
         const params = new URLSearchParams( location.hash.replace( "#", "" ) );
         const accessToken = params.get( "access_token" );
-        if( accessToken ) {
-            let result = await validateTwitchToken( accessToken );
+        if( accessCode ) {
+            if( !comfyTwitchAuth.codeAuthUrl ) {
+                throw new Error( "No code grant endpoint set" );
+            }
+            const tokenData = await fetch( `${comfyTwitchAuth.codeAuthUrl}?code=${accessCode}` ).then( r => r.json() );
+            // console.log( tokenData );
+            const token = tokenData.access_token;
+            const result = await validateTwitchToken( token );
+            // console.log( result );
+            if( result && result.login ) {
+                // Save into localStorage
+                localStorage.setItem( "twitchToken", token );
+                localStorage.setItem( "refreshToken", tokenData.refresh_token );
+                // Replace current URL
+                const url = window.location.href.split( "?" )[ 0 ];
+                window.location.replace( url );
+                result.token = token;
+                return result;
+            }
+        }
+        else if( accessToken ) {
+            const result = await validateTwitchToken( accessToken );
             if( result && result.login ) {
                 // Save into localStorage
                 localStorage.setItem( "twitchToken", accessToken );
@@ -20,25 +60,46 @@ async function checkTwitchTokenURL() {
         }
     }
     catch( err ) {
-        return null;
+        console.error( err );
     }
+    return null;
 }
 
 async function checkTwitchTokenLocalStorage() {
     try {
         // Check local storage
-        let accessToken = localStorage.getItem( "twitchToken" );
+        const accessToken = localStorage.getItem( "twitchToken" );
         if( accessToken ) {
             let result = await validateTwitchToken( accessToken );
             if( result && result.login ) {
                 result.token = accessToken;
                 return result;
             }
+            else {
+                // Try refreshing the token
+                const refreshToken = localStorage.getItem( "refreshToken" );
+                if( refreshToken ) {
+                    if( !comfyTwitchAuth.refreshUrl ) {
+                        throw new Error( "No refresh endpoint set" );
+                    }
+                    const tokenData = await fetch( `${comfyTwitchAuth.refreshUrl}?token=${refreshToken}` ).then( r => r.json() );
+                    const token = tokenData.access_token;
+                    const result = await validateTwitchToken( token );
+                    if( result && result.login ) {
+                        // Save into localStorage
+                        localStorage.setItem( "twitchToken", token );
+                        localStorage.setItem( "refreshToken", tokenData.refresh_token );
+                        result.token = token;
+                        return result;
+                    }
+                }
+            }
         }
     }
     catch( err ) {
-        return null;
+        console.error( err );
     }
+    return null;
 }
 
 async function validateTwitchToken( token ) {
@@ -65,8 +126,16 @@ let comfyTwitchAuth = {
     Logout: function () {
         localStorage.removeItem( "twitchToken" );
     },
-    Login: function ( clientId, redirectURI, scopes = [ "user:read:email" ] ) {
-        window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectURI}&response_type=token&scope=${scopes.join( " " )}`;
+    Login: function ( clientId, redirectURI, scopes = [ "user:read:email" ], type = "token" ) {
+        const state = generateNonce();
+        window.localStorage.setItem( "comfytwitch_nonce", state );
+        window.location.href = `https://id.twitch.tv/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectURI}&response_type=${type}&scope=${encodeURIComponent(scopes.join( " " ))}&state=${state}`;
+    },
+    SetAuthEndpoint: function ( codeToTokenUrl ) {
+        comfyTwitchAuth.codeAuthUrl = codeToTokenUrl;
+    },
+    SetRefreshEndpoint: function ( tokenRefreshUrl ) {
+        comfyTwitchAuth.refreshUrl = tokenRefreshUrl;
     },
     Check: async function( redirectURI ) {
         let result = await checkForTwitchToken();
