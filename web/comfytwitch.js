@@ -91,6 +91,7 @@ async function checkTwitchTokenLocalStorage() {
                     localStorage.setItem( "twitchToken", token );
                     localStorage.setItem( "refreshToken", tokenData.refresh_token );
                     result.token = token;
+                    result.refreshToken = tokenData.refresh_token;
                     return result;
                 }
             }
